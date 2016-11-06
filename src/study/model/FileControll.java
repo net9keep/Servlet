@@ -1,23 +1,28 @@
 package study.model;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.CharBuffer;
+import java.util.ArrayList;
+import java.util.List;
 
-public class File_Controll {
+public class FileControll {
 	private String data_path = "/Users/Achaean/Desktop/user.txt";
 	private String log_path = "/Users/Achaean/Desktop/log.txt";
-	private String s = new String();
+	private List<UserData> list = new ArrayList<UserData>();
 	
-	public String file_Read() throws IOException{
+	public List<UserData> file_Read() throws IOException{
 		try{
 			FileReader reader = new FileReader(data_path);
-			int c;
-			while((c=reader.read()) != -1){
-			  s = s + (char) c;
+			BufferedReader br = new BufferedReader(reader);
+			String tmp=null;
+			while((tmp=br.readLine())!=null){
+				UserData data = new UserData(tmp);
+				list.add(data);
 			}
 			reader.close();
 		}
@@ -25,15 +30,19 @@ public class File_Controll {
 			System.out.println("File is Not Found");
 			File file = new File(data_path);
 			file.createNewFile();
+			FileWriter fw = new FileWriter(data_path);
+			fw.write('[');
+			fw.append(System.getProperty("line.separator"));
+			fw.append(']');
+			fw.flush();
+			fw.close();
 			file_Read();
 		}
 		catch(IOException e){
 			System.out.println(e);
 		}
 		
-		if(s.length()==0)
-			s=null;
-		return s;
+		return list;
 	}
 	
 	public int file_Write(String data, String path) throws IOException{
